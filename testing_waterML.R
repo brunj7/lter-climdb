@@ -4,6 +4,7 @@
 library(tidyverse)
 library(stringr)
 library(WaterML)
+library(ggplot2)
 
 #get the list of supported CUAHSI HIS services
 services <- GetServices()
@@ -26,16 +27,18 @@ variables <- GetVariables(server)
 sites <- GetSites(server)
 
 # get full site info for all sites using the GetSiteInfo method
-siteinfo <- GetSiteInfo(server, "GLEON_LakeAnnie:1100")
+siteinfo <- GetSiteInfo(server, "GLEON_LakeAnnie:1020")
 
-
-# Do a specific query
-Temp <- GetValues(server, siteCode="GLEON_LakeAnnie:1100",
-                  variableCode="GLEON_LakeAnnie:4000")
-
+# Do a specific query on the 2m above graound sensor and temperature
+system.time(
+  Temp <- GetValues(server, siteCode="GLEON_LakeAnnie:1020",
+                  variableCode="GLEON_LakeAnnie:2010")
+)
 # Took ~220 sec
 
 # plot the data
-plot(Temp$time, Temp$DataValue)
+# plot(Temp$time, Temp$DataValue)
 
+ggplot(Temp) +
+  geom_line(aes(time,DataValue))
 
